@@ -1,0 +1,3 @@
+<div class="board">
+    <field [data]="field" *ngFor="let field of data" [ngClass]="field.pos % cols == 0 ? 'break' : ''" ></field>
+</div>
