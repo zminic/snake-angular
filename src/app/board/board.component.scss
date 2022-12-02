@@ -1,10 +1,12 @@
 field {
     float: left;
-    border: 1px solid #efefef;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     text-align: center;
+    vertical-align: middle;
     border-collapse: collapse;
+    font-size: 1.7em;
+    line-height: 30px;
 }
 
 field.break {

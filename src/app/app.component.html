@@ -1,3 +1,13 @@
 <div>
-  <board (gameOverEvent)="gameOver($event)" #board></board>
+  <div class="stats">
+    <span class="cookie">🍪</span>
+    <span class="points">{{points}}</span>
+    <span class="msg">{{message}}</span>
+    <div class="controls">
+      <span><strong>F2</strong> - new Game</span>
+      <span><strong>SPACE</strong> -Start/Pause</span>
+    </div>
+  </div>
+  <board (gameOverEvent)="onGameOver($event)" (pointEvent)="onPoint($event)" #board></board>
+  
 </div>

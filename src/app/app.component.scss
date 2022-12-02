@@ -1,0 +1,38 @@
+board {
+    border: 1px solid #333;
+    overflow: auto;
+    display: table;
+    background-color: #f4f6a8;
+}
+
+.stats {
+    width: 730px;
+    background-color: #eee;
+    padding: 10px;
+    border: 1px solid #333;
+    border-bottom: 0;
+    font-family: sans-serif;
+
+    .cookie {
+        font-size: 3em;
+    }
+
+    .points {
+        padding-left: 15px;
+        font-size: 2em;
+    }
+
+    .msg {
+        margin-left: 200px;
+        font-size: 2em;
+        color: #999;
+    }
+}
+
+.controls {
+    font-family: sans-serif;
+
+    span {
+        padding-right: 20px;
+    }
+}

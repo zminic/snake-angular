@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Field } from '../Field';
+import { Snake } from '../Snake';
 
 type Directions = "l" | "r" | "u" | "d";
 
@@ -10,16 +11,22 @@ type Directions = "l" | "r" | "u" | "d";
 })
 export class BoardComponent implements OnInit {
   @Output() gameOverEvent = new EventEmitter<string>();
+  @Output() pointEvent = new EventEmitter<void>();
 
-  rows = 30;
-  cols = 30;
-  dir: Directions = "r";
+  rows = 25;
+  cols = 25;
   initialLength = 4;
   data: Field[] = [];
-  head: Field = new Field(0);
-  tail: Field = new Field(0);
+  snake: Snake = new Snake();
 
   ngOnInit() {
+    this.new();
+  }
+
+  new() {
+    this.snake = new Snake();
+    this.data = [];
+
     // initialize empty fields
     for (let i = 0; i < this.rows * this.cols; i++) {
       this.data[i] = new Field(i);
@@ -27,41 +34,22 @@ export class BoardComponent implements OnInit {
 
     if (this.initialLength < 2) throw "Invalid initial snake length";
 
-    this.head = this.data[0];
-    this.tail = this.data[0];
-
     // initialize the snake
     for (let i = 0; i < this.initialLength; i++) {
-      let f = this.data[i];
-
-      if (i == this.initialLength - 1) {
-        this.head = f;
-        f.setHead();
-      } else {
-        f.isEmpty = false;
-      }
+      this.snake.addPart(this.data[i]);
     }
 
     this.plantFood();
   }
 
-  setDirection(dir: Directions) {
-    // do not allow changing to opposing direction
-    if (this.dir == 'l' && dir == 'r' || 
-        this.dir == 'r' && dir == 'l' || 
-        this.dir == 'u' && dir == 'd' || 
-        this.dir == 'd' && dir == 'u') {
-      return;
-    }
-
-    this.dir = dir;
-  }
-
-  move() {
-    let nextFieldIndex = this.getNextHeadIndex();
+  move(dir: Directions) {
+    let nextFieldIndex = this.getNextHeadIndex(dir);
 
     // check boundaries
-    if (nextFieldIndex < 0 || nextFieldIndex % this.cols == 0 || nextFieldIndex > this.rows * this.cols - 1) {
+    if (dir == 'r' && nextFieldIndex % this.cols == 0 ||
+        dir == 'l' && (nextFieldIndex + 1) % this.cols == 0 ||
+        dir == 'u' && nextFieldIndex < 0 ||
+        dir == 'd' && nextFieldIndex > this.rows * this.cols) {
       this.gameOver("loss");
       return;
     }
@@ -72,17 +60,12 @@ export class BoardComponent implements OnInit {
       return;
     }
 
-    // check food hit
-
     // perform move
-    this.head.setBody();
-    this.tail.setEmpty();
-    this.data[nextFieldIndex].setHead();
-    this.head = this.data[nextFieldIndex];
-
-    if (!this.data[nextFieldIndex].isFood) {
-      this.tail = this.data[this.getNextTailIndex()];
-    } else {
+    let isFood = this.data[nextFieldIndex].isFood;
+    this.snake.move(this.data[nextFieldIndex]);
+    
+    if (isFood)  {
+      this.pointEvent.emit();
       this.plantFood();
     }
   }
@@ -98,18 +81,13 @@ export class BoardComponent implements OnInit {
     this.data[index].setFood();
   }
 
-  private getNextHeadIndex() {
-    return this.dir === 'r' ? this.head.pos + 1 :
-      this.dir == 'l' ? this.head.pos - 1 :
-        this.dir == 'u' ? this.head.pos - this.cols :
-          this.head.pos + this.cols;
-  }
+  private getNextHeadIndex(dir: Directions) {
+    let head = this.snake.getHead();
 
-  private getNextTailIndex() {
-    if (!this.data[this.tail.pos + 1].isEmpty) return this.tail.pos + 1;
-    if (!this.data[this.tail.pos - 1].isEmpty) return this.tail.pos - 1;
-    if (!this.data[this.tail.pos + this.cols].isEmpty) return this.tail.pos + this.cols;
-    return this.tail.pos - this.cols;
+    return dir === 'r' ? head.pos + 1 :
+      dir == 'l' ? head.pos - 1 :
+        dir == 'u' ? head.pos - this.cols :
+          head.pos + this.cols;
   }
 
   gameOver(result: string) {
