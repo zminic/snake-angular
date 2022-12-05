@@ -3,10 +3,13 @@ board {
     overflow: auto;
     display: table;
     background-color: #f4f6a8;
+    padding: 5px;
+    padding-left: 3px;
+    padding-right: 7px;
 }
 
 .stats {
-    width: 730px;
+    width: 590px;
     background-color: #eee;
     padding: 10px;
     border: 1px solid #333;
@@ -23,9 +26,13 @@ board {
     }
 
     .msg {
-        margin-left: 200px;
+        margin-left: 150px;
         font-size: 2em;
         color: #999;
+    }
+
+    .controls {
+        margin-top: 10px;
     }
 }
 

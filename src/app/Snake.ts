@@ -29,4 +29,8 @@ export class Snake {
     getHead(): Field {
         return this.parts[this.parts.length - 1];
     }
+
+    getSize() {
+        return this.parts.length;
+    }
 }

@@ -5,9 +5,10 @@
     <span class="msg">{{message}}</span>
     <div class="controls">
       <span><strong>F2</strong> - new Game</span>
-      <span><strong>SPACE</strong> -Start/Pause</span>
+      <span><strong>SPACE</strong> - Start/Pause</span>
+      <span><strong>Arrow keys</strong> - Move</span>
     </div>
   </div>
-  <board (gameOverEvent)="onGameOver($event)" (pointEvent)="onPoint($event)" #board></board>
+  <board (gameOverEvent)="onGameOver($event)" (pointEvent)="onPoint()" #board></board>
   
 </div>

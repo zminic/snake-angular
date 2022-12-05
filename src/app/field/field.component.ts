@@ -3,8 +3,7 @@ import { Field } from '../Field';
 
 @Component({
   selector: 'field',
-  templateUrl: './field.component.html',
-  styleUrls: ['./field.component.scss']
+  templateUrl: './field.component.html'
 })
 export class FieldComponent {
   @Input() data!: Field;

@@ -13,8 +13,8 @@ export class BoardComponent implements OnInit {
   @Output() gameOverEvent = new EventEmitter<string>();
   @Output() pointEvent = new EventEmitter<void>();
 
-  rows = 25;
-  cols = 25;
+  rows = 20;
+  cols = 20;
   initialLength = 4;
   data: Field[] = [];
   snake: Snake = new Snake();
@@ -66,7 +66,14 @@ export class BoardComponent implements OnInit {
     
     if (isFood)  {
       this.pointEvent.emit();
-      this.plantFood();
+
+      // win condition
+      if (this.snake.getSize() == this.data.length) {
+        this.gameOver("win");
+        return;
+      } else {
+        this.plantFood();
+      }
     }
   }
 

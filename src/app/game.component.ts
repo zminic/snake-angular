@@ -5,10 +5,10 @@ type Directions = "l" | "r" | "u" | "d";
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  templateUrl: './game.component.html',
+  styleUrls: ['./game.component.scss']
 })
-export class AppComponent implements AfterViewInit, OnDestroy {
+export class GameComponent implements AfterViewInit, OnDestroy {
   @ViewChild('board') board!: BoardComponent;
 
   private timer: number = 0;
@@ -19,7 +19,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   points = 0;
   message = "";
   running = false;
-  inProgress = false;
+  gameOver = false;
 
   ngAfterViewInit(): void {
     document.addEventListener("keydown", this.handleKeyDown);
@@ -48,10 +48,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   setDirection(dir: Directions) {
     // do not allow changing to opposing direction
-    if (this.dir == 'l' && dir == 'r' || 
-        this.dir == 'r' && dir == 'l' || 
-        this.dir == 'u' && dir == 'd' || 
-        this.dir == 'd' && dir == 'u') {
+    if (this.dir == 'l' && dir == 'r' ||
+      this.dir == 'r' && dir == 'l' ||
+      this.dir == 'u' && dir == 'd' ||
+      this.dir == 'd' && dir == 'u') {
       return;
     }
 
@@ -59,49 +59,50 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   new() {
-    this.stopGameTimer();
+    this.running = false;
+    this.gameOver = false;
     this.dir = 'r';
     this.nextDir = 'r';
     this.points = 0;
-    this.inProgress = true;
     this.message = "";
-    this.running = false;
     this.board.new();
   }
 
   start() {
-    this.message = "";
-    this.startGameTimer();
-    this.running = true;
+    if (!this.gameOver) {
+      this.message = "";
+      this.running = true;
+      window.requestAnimationFrame(this.gameLoop);
+    }
   }
 
   pause() {
     this.message = "PAUSE";
-    this.stopGameTimer();
     this.running = false;
   }
 
   onGameOver(result: string) {
-    this.message = "GAME OVER";
-    this.stopGameTimer();
-    this.inProgress = false;
+    this.message = result == "loss" ? "GAME OVER" : "YOU WIN!";
+    this.running = false;
+    this.gameOver = true;
   }
 
-  onPoint(event: any) {
+  onPoint() {
     this.points++;
   }
 
-  stopGameTimer = () =>  clearInterval(this.timer);
+  loopCount = 0;
+  gameLoop = () => {
+    // lower speed
+    if (this.loopCount == 7) {
+      this.setDirection(this.nextDir);
+      this.board.move(this.dir);
+      this.loopCount = 0;
+    }
 
-  startGameTimer()
-  {
-    this.stopGameTimer();
-
-    this.timer = window.setInterval(() => { 
-      window.requestAnimationFrame(() => {
-        this.setDirection(this.nextDir);
-        this.board.move(this.dir);
-      });
-     }, 120);
+    if (this.running) {
+      this.loopCount++;
+      window.requestAnimationFrame(this.gameLoop);
+    }
   }
 }
